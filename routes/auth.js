@@ -59,7 +59,6 @@ router.post('/signup', isNotLoggedIn(), validationLoggin(), (req, res, next) => 
       });
 
       return newUser.save().then(() => {
-        // TODO delete password 
         req.session.currentUser = newUser;
         res.status(200).json(newUser);
       });
