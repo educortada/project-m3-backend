@@ -11,6 +11,9 @@ const tripSchema = new Schema({
   destination: {
     type: String,
   },
+  imgUrl: {
+    type: String,
+  },
   date: {
     type: Number,
     default: 20
@@ -21,7 +24,7 @@ const tripSchema = new Schema({
   },
   persons: {
     type: Number,
-    default: 20
+    default: 2
   }
 });
 
