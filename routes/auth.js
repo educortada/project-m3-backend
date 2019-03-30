@@ -14,8 +14,8 @@ router.post('/login', isNotLoggedIn(), validationLoggin(), (req, res, next) => {
   const { username, password } = req.body;
 
   User.findOne({
-      username
-    })
+    username
+  })
     .then((user) => {
       if (!user) {
         const err = new Error('Not Found');
@@ -37,7 +37,7 @@ router.post('/login', isNotLoggedIn(), validationLoggin(), (req, res, next) => {
 });
 
 router.post('/signup', isNotLoggedIn(), validationLoggin(), (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
 
   User.findOne({
       username
@@ -55,6 +55,7 @@ router.post('/signup', isNotLoggedIn(), validationLoggin(), (req, res, next) => 
 
       const newUser = new User({
         username,
+        email,
         password: hashPass,
       });
 
@@ -76,5 +77,14 @@ router.get('/private', isLoggedIn(), (req, res, next) => {
     message: 'This is a private message'
   });
 });
+
+router.put('/profile/update', isLoggedIn(), async (req, res, next) => {
+  const { username, email } = req.body
+  const { _id } = req.session.currentUser
+
+  const userUpdated = await User.findByIdAndUpdate(_id, { username, email }, { new: true })
+  res.json(userUpdated)
+
+})
 
 module.exports = router;
