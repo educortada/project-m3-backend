@@ -57,6 +57,7 @@ router.post('/signup', isNotLoggedIn(), validationLoggin(), (req, res, next) => 
         username,
         email,
         password: hashPass,
+        avatarURL: 'https://firebasestorage.googleapis.com/v0/b/project-m3-322bd.appspot.com/o/images%2Favatar-default.png?alt=media&token=850710b7-3f8d-4115-8977-0b71c4603b5b'
       });
 
       return newUser.save().then(() => {
@@ -79,10 +80,10 @@ router.get('/private', isLoggedIn(), (req, res, next) => {
 });
 
 router.put('/profile/update', isLoggedIn(), (req, res, next) => {
-  const { username, email } = req.body
+  const { username, email, avatarURL } = req.body
   const { _id } = req.session.currentUser
 
-  return User.findByIdAndUpdate(_id, { username, email }, { new: true })
+  return User.findByIdAndUpdate(_id, { username, email, avatarURL }, { new: true })
     .then((data) => {
       req.session.currentUser = data
       res.json(data)
