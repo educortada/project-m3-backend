@@ -40,8 +40,8 @@ router.post('/signup', isNotLoggedIn(), validationLoggin(), (req, res, next) => 
   const { username, password, email } = req.body;
 
   User.findOne({
-      username
-    }, 'username')
+    username
+  }, 'username')
     .then((userExists) => {
       if (userExists) {
         const err = new Error('Unprocessable Entity');
@@ -78,13 +78,15 @@ router.get('/private', isLoggedIn(), (req, res, next) => {
   });
 });
 
-router.put('/profile/update', isLoggedIn(), async (req, res, next) => {
+router.put('/profile/update', isLoggedIn(), (req, res, next) => {
   const { username, email } = req.body
   const { _id } = req.session.currentUser
 
-  const userUpdated = await User.findByIdAndUpdate(_id, { username, email }, { new: true })
-  res.json(userUpdated)
-
+  return User.findByIdAndUpdate(_id, { username, email }, { new: true })
+    .then((data) => {
+      req.session.currentUser = data
+      res.json(data)
+    })
 })
 
 module.exports = router;
