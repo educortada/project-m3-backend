@@ -23,7 +23,19 @@ const tripSchema = new Schema({
   },
   adults: {
     type: Number,
-  }
+  },
+  startFrom: {
+    type: String,
+  },
+  startTo: {
+    type: String,
+  },
+  returnFrom: {
+    type: String,
+  },
+  returnTo: {
+    type: String,
+  },
 });
 
 const Trip = mongoose.model('Trip', tripSchema);

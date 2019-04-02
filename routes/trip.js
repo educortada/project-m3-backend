@@ -5,7 +5,7 @@ const Trip = require('../models/trip');
 const { isLoggedIn } = require('../helpers/middlewares');
 
 router.post('/create', isLoggedIn(), (req, res, next) => {
-  const { cityTo, price } = req.body.flight;
+  const { cityTo, price, dTime, aTime, route} = req.body.flight;
   const { adults, photoCity } = req.body
 
   const newtrip = new Trip({
@@ -13,6 +13,10 @@ router.post('/create', isLoggedIn(), (req, res, next) => {
     destination: cityTo,
     adults,
     price,
+    startFrom: dTime,
+    startTo: aTime,
+    returnFrom: route[1].dTime,
+    returnTo: route[1].aTime,
     owner: req.session.currentUser._id
   })
   const saveTrip = newtrip.save().then((data) => res.json(data))
