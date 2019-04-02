@@ -20,11 +20,9 @@ const tripSchema = new Schema({
   },
   price: {
     type: Number,
-    
   },
-  persons: {
+  adults: {
     type: Number,
-    default: 2
   }
 });
 

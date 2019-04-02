@@ -6,11 +6,12 @@ const { isLoggedIn } = require('../helpers/middlewares');
 
 router.post('/create', isLoggedIn(), (req, res, next) => {
   const { cityTo, price } = req.body.flight;
-  const { photoCity } = req.body
+  const { adults, photoCity } = req.body
 
   const newtrip = new Trip({
     imgUrl: photoCity,
     destination: cityTo,
+    adults,
     price,
     owner: req.session.currentUser._id
   })
