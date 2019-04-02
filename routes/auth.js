@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 const User = require('../models/user');
 
-const { isLoggedIn, isNotLoggedIn, validationLoggin } = require('../helpers/middlewares');
+const { isLoggedIn, isNotLoggedIn, validationLoggin, validationSignup } = require('../helpers/middlewares');
 
 router.get('/me', isLoggedIn(), (req, res, next) => {
   res.json(req.session.currentUser);
@@ -18,25 +18,24 @@ router.post('/login', isNotLoggedIn(), validationLoggin(), (req, res, next) => {
   })
     .then((user) => {
       if (!user) {
-        const err = new Error('Not Found');
-        err.status = 404;
-        err.statusMessage = 'Not Found';
-        next(err)
+        return res.status(404).json({
+          error: true,
+          code: 'Error! incorrect username and password!',
+        })
       }
       if (bcrypt.compareSync(password, user.password)) {
         req.session.currentUser = user;
         return res.status(200).json(user);
-      } else {
-        const err = new Error('Unauthorized');
-        err.status = 401;
-        err.statusMessage = 'Unauthorized';
-        next(err);
       }
+      return res.status(404).json({
+        error: true,
+        code: 'Error! incorrect username or password!',
+      });
     })
     .catch(next);
 });
 
-router.post('/signup', isNotLoggedIn(), validationLoggin(), (req, res, next) => {
+router.post('/signup', isNotLoggedIn(), validationSignup(), (req, res, next) => {
   const { username, password, email } = req.body;
 
   User.findOne({
@@ -44,10 +43,10 @@ router.post('/signup', isNotLoggedIn(), validationLoggin(), (req, res, next) => 
   }, 'username')
     .then((userExists) => {
       if (userExists) {
-        const err = new Error('Unprocessable Entity');
-        err.status = 422;
-        err.statusMessage = 'username-not-unique';
-        next(err);
+        return res.status(422).json({
+          error: true,
+          code: 'Error! username already exists.',
+        });
       }
 
       const salt = bcrypt.genSaltSync(10);
@@ -81,6 +80,12 @@ router.get('/private', isLoggedIn(), (req, res, next) => {
 router.put('/profile/update', isLoggedIn(), (req, res, next) => {
   const { username, email, avatarURL } = req.body
   const { _id } = req.session.currentUser
+
+  if (!username || !email) {
+    return res.status(422).json({
+      code: 'Error! check all empty fields',
+    });
+  }
 
   return User.findByIdAndUpdate(_id, { username, email, avatarURL }, { new: true })
     .then((data) => {
