@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const ObjectId = Schema.Types.ObjectId;
 
-const tripSchema = new Schema({
+const favoriteSchema = new Schema({
   owner: {
     type: ObjectId,
     ref: 'User',
@@ -34,6 +34,6 @@ const tripSchema = new Schema({
   },
 });
 
-const Trip = mongoose.model('Trip', tripSchema);
+const Favorite = mongoose.model('favorite', favoriteSchema);
 
-module.exports = Trip;
+module.exports = Favorite;
